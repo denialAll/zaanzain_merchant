@@ -19,12 +19,14 @@ import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.TokenManager
 import com.example.zaanzainmerchant.viewmodels.LoginViewModel
 import com.example.zaanzainmerchant.viewmodels.RegistrationViewModel
+import com.example.zaanzainmerchant.viewmodels.RestaurantDetailViewModel
 
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int) {
     object Login : Screen("login", R.string.login_screen)
     object Registration : Screen("registration", R.string.registration_screen)
     object Home : Screen("home", R.string.home_screen)
+    object RestaurantDetails : Screen("restaurant_details", R.string.restaurant_details)
 }
 
 
@@ -32,6 +34,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int) {
 fun MerchantApp(
     registrationViewModel: RegistrationViewModel = viewModel(),
     loginViewModel: LoginViewModel = viewModel(),
+    restaurantDetailViewModel: RestaurantDetailViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
     tokenManager: TokenManager = TokenManager(LocalContext.current)
 ){
@@ -41,7 +44,7 @@ fun MerchantApp(
     ) { innerPadding ->
         var startDest = Screen.Login.route
         if (tokenManager.getToken() != null) {
-            startDest = Screen.Home.route
+            startDest = Screen.RestaurantDetails.route
         }
         Log.d(TAG, "Start")
         NavHost(
@@ -68,6 +71,11 @@ fun MerchantApp(
             }
             composable(route = Screen.Home.route) {
                 NewOrdersScreen()
+            }
+            composable(route = Screen.RestaurantDetails.route) {
+                RestaurantDetailScreen(
+                    restaurantDetailViewModel = restaurantDetailViewModel
+                )
             }
 
         }
