@@ -1,12 +1,27 @@
 package com.example.zaanzainmerchant.viewmodels
 
-import androidx.activity.result.contract.ActivityResultContracts
+import android.app.Application
+import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.zaanzainmerchant.repository.RestaurantDetailRepository
+import com.example.zaanzainmerchant.utils.Constants.TAG
+import com.example.zaanzainmerchant.utils.MerchantData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RestaurantDetailViewModel : ViewModel() {
+
+@HiltViewModel
+class RestaurantDetailViewModel @Inject constructor(
+    private val restaurantDetailRepository: RestaurantDetailRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
     var restaurantName by mutableStateOf("")
         private set
@@ -20,9 +35,32 @@ class RestaurantDetailViewModel : ViewModel() {
         phoneNumber = phonenumber
     }
 
-    var displayPicture by mutableStateOf("")
+    var imageUri by mutableStateOf<Uri?>(null)
     private set
-    fun updateDisplayPicture(displaypicture: String){
-        displayPicture = displaypicture
+    fun updateImageUri(uri: Uri){
+        imageUri = uri
+    }
+
+
+    fun uploadMerchantData(
+        uri: Uri = imageUri!!,
+        context: Context = getApplication<Application>().applicationContext,
+    ) {
+        val data = MerchantData(
+            name = restaurantName,
+            phoneNumber = phoneNumber,
+            displayPicture = uri
+        )
+
+        viewModelScope.launch {
+            try {
+                restaurantDetailRepository.uploadMerchantData(
+                    merchantData = data,
+                    context = context
+                )
+            } catch (e: Exception) {
+                Log.d(TAG, "failed ${e.message}")
+            }
+        }
     }
 }

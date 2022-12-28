@@ -1,5 +1,6 @@
 package com.example.zaanzainmerchant.utils
 
+import android.net.Uri
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,10 +20,11 @@ data class ProductDetails(
     val id: Int,
     val title: String,
     val merchant: String,
-    val description: String,
+    val description: String = "",
     val price: Double,
     val category: String,
-    @Json(name = "category_order") val categoryOrder: Int
+    @Json(name = "category_order") val categoryOrder: Int,
+    @Json(name = "product_picture") val productPicture: String?
 )
 
 @JsonClass(generateAdapter = true)
@@ -81,7 +83,6 @@ data class Basket(
     val cartList: List<CartToSend>
 )
 
-
 data class OrderReceived(
     @Json(name = "order_status") val orderStatus: String
 )
@@ -89,4 +90,22 @@ data class OrderReceived(
 data class Category(
     val category: String,
     val categoryOrder: Int
+)
+
+data class MerchantData(
+    val name: String,
+    @Json(name = "phone_number") val phoneNumber: String,
+    @Json(name = "is_open") val isOpen: Boolean = false,
+    @Json(name = "display_picture") val displayPicture: Uri
+)
+
+data class ProductData(
+    val title: String,
+    val description: String = "",
+    val price: Double,
+    val category: String,
+    @Json(name = "category_order") val categoryOrder: Int,
+    val servings: Int = 1,
+    @Json(name = "is_available") val isAvailable: Boolean = false,
+    @Json(name = "product_picture") val productPicture: Uri? = null
 )

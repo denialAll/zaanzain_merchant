@@ -40,7 +40,7 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI){
         if (response.isSuccessful && response.body() != null) {
             tokenManager.saveToken(response.body()!!.token)
             _userResponse.value = NetworkResult.Success(response.body()!!)
-            Log.d(TAG, "Succesful network result is ${_userResponse.value}")
+            Log.d(TAG, "Successful network result is ${_userResponse.value}")
         }
         else if (response.errorBody() != null) {
             Log.d(TAG, "response.errorbody error occured!, ${response.message()}")
