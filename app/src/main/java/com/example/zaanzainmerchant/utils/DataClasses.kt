@@ -1,5 +1,6 @@
 package com.example.zaanzainmerchant.utils
 
+import android.net.Uri
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,4 +90,15 @@ data class OrderReceived(
 data class Category(
     val category: String,
     val categoryOrder: Int
+)
+
+data class MerchantData(
+    val name: String = "The wok king",
+    @Json(name = "phone_number") val phoneNumber: String = "03415286986",
+    @Json(name = "is_open") val isOpen: Boolean = false,
+    @Json(name = "display_picture") val displayPicture: Uri
+)
+
+data class TestImage(
+    @Json(name = "display_picture") val displayPicture: Uri
 )
