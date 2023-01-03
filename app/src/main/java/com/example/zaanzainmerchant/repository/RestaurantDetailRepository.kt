@@ -22,8 +22,8 @@ class RestaurantDetailRepository @Inject constructor(private val authAPI: AuthAP
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun uploadMerchantData(merchantData: MerchantData, context: Context) {
 
-        val cacheDir = context.cacheDir
-        val file = File(cacheDir, "image.png")
+        val filesDir = context.filesDir
+        val file = File(filesDir, "image.png")
         Log.d(TAG, file.name)
         withContext(Dispatchers.IO) {
 
@@ -51,4 +51,6 @@ class RestaurantDetailRepository @Inject constructor(private val authAPI: AuthAP
             }
         }
     }
+
+
 }

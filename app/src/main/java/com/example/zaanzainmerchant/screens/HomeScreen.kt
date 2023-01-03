@@ -1,5 +1,6 @@
-package com.example.zaanzainmerchant.screens
+import com.example.zaanzainmerchant.screens.*
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -13,11 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.zaanzainmerchant.R
+import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.TokenManager
 import com.example.zaanzainmerchant.viewmodels.*
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +41,7 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, val icon:
     object Settings : Screen("settings", R.string.settings, Icons.Filled.Settings)
     object Profile : Screen("profile", R.string.profile, Icons.Filled.Person)
     object Product : Screen("add_product", R.string.add_product, Icons.Filled.Add)
-    object ProductList : Screen("product_list", R.string.product_list, Icons.Filled.List)
+    object ProductList: Screen("product_list", R.string.product_list, Icons.Filled.List)
 }
 
 
@@ -62,11 +61,11 @@ fun MerchantApp(
         scaffoldState = scaffoldState,
         topBar = { TopBar(scope = scope, scaffoldState = scaffoldState) },
         drawerContent = {
-                        Drawer(
-                            scope = scope,
-                            scaffoldState = scaffoldState,
-                            navController = navController
-                        )
+            Drawer(
+                scope = scope,
+                scaffoldState = scaffoldState,
+                navController = navController
+            )
         },
         bottomBar = {}
     ) { innerPadding ->
@@ -105,10 +104,13 @@ fun MerchantApp(
                 )
             }
             composable(route = Screen.Product.route) {
-                AddProductScreen(addProductViewModel = addProductViewModel)
+                Text(text = "Add product screen")
             }
             composable(route = Screen.Settings.route ){
                 Text(text = "Settings screen")
+            }
+            composable(route = Screen.Product.route) {
+                AddProductScreen(addProductViewModel = addProductViewModel)
             }
             composable(route = Screen.ProductList.route) {
                 ProductListScreen(productListViewModel = productListViewModel)
@@ -192,30 +194,6 @@ fun DrawerItem(
             text = stringResource(id = item.resourceId)
         )
     }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

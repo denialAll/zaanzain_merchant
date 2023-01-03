@@ -25,49 +25,57 @@ class AddProductViewModel @Inject constructor(
 
     var title by mutableStateOf("")
         private set
-    fun updateTitle(productTitle: String){
+
+    fun updateTitle(productTitle: String) {
         title = productTitle
     }
 
     var category by mutableStateOf("")
         private set
-    fun updateCategory(productCategory: String){
+
+    fun updateCategory(productCategory: String) {
         category = productCategory
     }
 
     var categoryOrder by mutableStateOf("")
         private set
-    fun updateCategoryOrder(productCategoryOrder: String){
+
+    fun updateCategoryOrder(productCategoryOrder: String) {
         categoryOrder = productCategoryOrder
     }
 
     var description by mutableStateOf("")
         private set
-    fun updateDescription(productDescription: String){
+
+    fun updateDescription(productDescription: String) {
         description = productDescription
     }
 
     var price by mutableStateOf("")
         private set
-    fun updatePrice(productPrice: String){
+
+    fun updatePrice(productPrice: String) {
         price = productPrice
     }
 
     var servings by mutableStateOf("")
         private set
+
     fun updateServings(productServings: String) {
         servings = productServings
     }
 
     var isAvailable by mutableStateOf(false)
         private set
+
     fun updateIsProductAvailable(isProductAvailable: Boolean) {
         isAvailable = isProductAvailable
     }
 
     var imageUri by mutableStateOf<Uri?>(null)
         private set
-    fun updateImageUri(uri: Uri){
+
+    fun updateImageUri(uri: Uri) {
         imageUri = uri
     }
 
@@ -84,7 +92,6 @@ class AddProductViewModel @Inject constructor(
             servings = servings.toInt(),
             isAvailable = isAvailable,
             productPicture = uri
-
         )
         viewModelScope.launch {
             try {
