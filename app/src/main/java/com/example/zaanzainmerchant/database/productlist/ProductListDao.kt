@@ -1,6 +1,7 @@
 package com.example.zaanzainmerchant.database.productlist
 
 import androidx.room.*
+import com.example.zaanzainmerchant.utils.ProductDetails
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,4 +16,6 @@ interface ProductListDao {
     @Query("delete from room_product_list where room_product_list.id not in (:productIdLists)")
     fun deleteOldProducts( productIdLists: List<Int> )
 
+    @Query("select * from room_product_list where room_product_list.id = (:productId)")
+    fun selectProductById( productId: Int) : RoomProductList
 }

@@ -25,6 +25,8 @@ data class ProductDetails(
     val description: String,
     val price: Double,
     val category: String,
+    val servings: Int = 1,
+    @Json(name = "is_available") val isAvailable: Boolean = false ,
     @Json(name = "product_picture") val productPicture: String?,
     @Json(name = "category_order") val categoryOrder: Int
 )

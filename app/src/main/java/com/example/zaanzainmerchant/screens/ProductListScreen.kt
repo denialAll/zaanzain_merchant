@@ -19,13 +19,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.ProductDetails
+import com.example.zaanzainmerchant.viewmodels.ProductEditViewModel
 import com.example.zaanzainmerchant.viewmodels.ProductListViewModel
 
 @Composable
 fun ProductListScreen(
-    productListViewModel: ProductListViewModel
+    productListViewModel: ProductListViewModel,
+    productEditViewModel: ProductEditViewModel,
+    navController: NavController
 ) {
     val categoryList by productListViewModel.categoryList.collectAsState()
     val productList by productListViewModel.productList.collectAsState()
@@ -54,7 +58,9 @@ fun ProductListScreen(
             for (productDetails in productList) {
                 if (productDetails.category == category.category) {
                     ProductDetailCard(
-                        product = productDetails
+                        product = productDetails,
+                        productEditViewModel = productEditViewModel,
+                        navController = navController
                     )
                 }
             }
@@ -64,7 +70,9 @@ fun ProductListScreen(
 
 @Composable
 fun ProductDetailCard(
-    product: ProductDetails
+    product: ProductDetails,
+    productEditViewModel: ProductEditViewModel,
+    navController: NavController
 ) {
     Card(
         modifier = Modifier
@@ -109,7 +117,10 @@ fun ProductDetailCard(
             Spacer(modifier = Modifier.weight(1f).fillMaxHeight())
 
             TextButton(
-                onClick = { /*TODO*/ }
+                onClick = {
+                    productEditViewModel.updateProductIdToEdit(product)
+                    navController.navigate(Screen.ProductEdit.route)
+                }
             ) {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit product")
             }

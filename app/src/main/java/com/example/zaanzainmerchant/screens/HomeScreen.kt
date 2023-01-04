@@ -41,7 +41,8 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, val icon:
     object Settings : Screen("settings", R.string.settings, Icons.Filled.Settings)
     object Profile : Screen("profile", R.string.profile, Icons.Filled.Person)
     object Product : Screen("add_product", R.string.add_product, Icons.Filled.Add)
-    object ProductList: Screen("product_list", R.string.product_list, Icons.Filled.List)
+    object ProductList : Screen("product_list", R.string.product_list, Icons.Filled.List)
+    object ProductEdit : Screen("product_edit", R.string.edit_product)
 }
 
 
@@ -52,6 +53,7 @@ fun MerchantApp(
     restaurantDetailViewModel: RestaurantDetailViewModel = viewModel(),
     addProductViewModel: AddProductViewModel = viewModel(),
     productListViewModel: ProductListViewModel = viewModel(),
+    productEditViewModel: ProductEditViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
     tokenManager: TokenManager = TokenManager(LocalContext.current),
     scope: CoroutineScope = rememberCoroutineScope(),
@@ -113,7 +115,17 @@ fun MerchantApp(
                 AddProductScreen(addProductViewModel = addProductViewModel)
             }
             composable(route = Screen.ProductList.route) {
-                ProductListScreen(productListViewModel = productListViewModel)
+                ProductListScreen(
+                    productListViewModel = productListViewModel,
+                    productEditViewModel = productEditViewModel,
+                    navController = navController
+                )
+            }
+            composable(route = Screen.ProductEdit.route) {
+                ProductEditScreen(
+                    productEditViewModel = productEditViewModel, 
+                    productListViewModel = productListViewModel
+                )
             }
 
         }

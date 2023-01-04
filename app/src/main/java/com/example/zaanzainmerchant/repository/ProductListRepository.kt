@@ -19,7 +19,7 @@ class ProductListRepository @Inject constructor(private val database: AppDatabas
         withContext(Dispatchers.IO) {
             val productList = authAPI.getProductList()
             database.productListDao().insertAll(NetworkContainer(productList).asDatabaseModel())
-            database.productListDao().deleteOldProducts( productList.map{ it.id })
+            database.productListDao().deleteOldProducts( productList.map { it.id })
         }
     }
 }
