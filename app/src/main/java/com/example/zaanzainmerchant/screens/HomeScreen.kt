@@ -1,5 +1,3 @@
-import com.example.zaanzainmerchant.screens.*
-
 import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -26,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.zaanzainmerchant.R
+import com.example.zaanzainmerchant.screens.*
 import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.TokenManager
 import com.example.zaanzainmerchant.viewmodels.*
@@ -43,6 +42,8 @@ sealed class Screen(val route: String, @StringRes val resourceId: Int, val icon:
     object Product : Screen("add_product", R.string.add_product, Icons.Filled.Add)
     object ProductList : Screen("product_list", R.string.product_list, Icons.Filled.List)
     object ProductEdit : Screen("product_edit", R.string.edit_product)
+    object UpdateProductImage : Screen("update_product_image", R.string.update_product_image)
+    object Logout : Screen("logout", R.string.logout, Icons.Filled.Logout)
 }
 
 
@@ -54,6 +55,8 @@ fun MerchantApp(
     addProductViewModel: AddProductViewModel = viewModel(),
     productListViewModel: ProductListViewModel = viewModel(),
     productEditViewModel: ProductEditViewModel = viewModel(),
+    newOrdersViewModel: NewOrdersViewModel = viewModel(),
+    logoutViewModel: LogoutViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
     tokenManager: TokenManager = TokenManager(LocalContext.current),
     scope: CoroutineScope = rememberCoroutineScope(),
@@ -74,6 +77,7 @@ fun MerchantApp(
         var startDest = Screen.Login.route
         if (tokenManager.getToken() != null) {
             startDest = Screen.Home.route
+            Log.d(TAG, "token is: ${tokenManager.getToken()}")
         }
         NavHost(
             navController = navController,
@@ -98,7 +102,9 @@ fun MerchantApp(
                 )
             }
             composable(route = Screen.Home.route) {
-                NewOrdersScreen()
+                NewOrdersScreen(
+                    newOrdersViewModel = newOrdersViewModel
+                )
             }
             composable(route = Screen.Profile.route ) {
                 RestaurantDetailScreen(
@@ -124,7 +130,16 @@ fun MerchantApp(
             composable(route = Screen.ProductEdit.route) {
                 ProductEditScreen(
                     productEditViewModel = productEditViewModel, 
-                    productListViewModel = productListViewModel
+                    productListViewModel = productListViewModel,
+                    navController = navController
+                )
+            }
+            composable(route = Screen.UpdateProductImage.route) {
+                ImageUpdateScreen(productEditViewModel = productEditViewModel)
+            }
+            composable(route = Screen.Logout.route) {
+                LogoutScreen(
+                    logoutViewModel = logoutViewModel
                 )
             }
 
@@ -162,7 +177,8 @@ fun Drawer(
         Screen.Settings,
         Screen.Profile,
         Screen.Product,
-        Screen.ProductList
+        Screen.ProductList,
+        Screen.Logout
     )
     Column {
         val navBackStackEntry by navController.currentBackStackEntryAsState()

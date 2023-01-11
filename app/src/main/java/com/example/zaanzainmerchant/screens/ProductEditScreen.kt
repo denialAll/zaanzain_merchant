@@ -6,6 +6,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -20,6 +21,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.zaanzainmerchant.R
 import com.example.zaanzainmerchant.utils.Constants
 import com.example.zaanzainmerchant.viewmodels.ProductEditViewModel
@@ -29,7 +32,8 @@ import com.example.zaanzainmerchant.viewmodels.ProductListViewModel
 @Composable
 fun ProductEditScreen(
     productEditViewModel: ProductEditViewModel,
-    productListViewModel: ProductListViewModel
+    productListViewModel: ProductListViewModel,
+    navController: NavController
 ){
     Column(
         modifier = Modifier
@@ -126,6 +130,40 @@ fun ProductEditScreen(
                 onCheckedChange = { productEditViewModel.updateIsProductAvailable(it) }
             )
         }
+
+        TextButton(
+            onClick = {
+                navController.navigate(Screen.UpdateProductImage.route)
+            }) {
+            Icon(painterResource(R.drawable.photo_library), "")
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            Text("Add product photo")
+        }
+
+        Button(
+            onClick = { productEditViewModel.updateProductData() }
+        ){
+            Text("Update product")
+        }
+    }
+}
+
+
+@Composable
+fun ImageUpdateScreen(
+    productEditViewModel: ProductEditViewModel
+){
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        val productPrevImage by productEditViewModel.productImage.collectAsState()
+        val imageUri by productEditViewModel.imageUri.collectAsState()
+
         val pickMedia = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ){ uri ->
@@ -137,19 +175,37 @@ fun ProductEditScreen(
             }
         }
 
-        TextButton(
-            onClick = {
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-            }) {
-            Icon(painterResource(R.drawable.photo_library), "")
-            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Add product photo")
+        if (imageUri == null) {
+            AsyncImage(model = productPrevImage, contentDescription = "")
+
+            TextButton(
+                onClick = {
+                    pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                }) {
+                Icon(painterResource(R.drawable.photo_library), "")
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                Text("Change product picture")
+            }
+        } else {
+            AsyncImage(model = imageUri, contentDescription = "")
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
+                Button(onClick = {
+                    productEditViewModel.updateImageUri(null)
+                }) {
+                    Text("Cancel")
+                }
+                Button(onClick = {
+                    productEditViewModel.updateProductImage()
+                }) {
+                    Text("Upload")
+                }
+            }
         }
 
-        Button(
-            onClick = {  }
-        ){
-            Text("Upload product")
-        }
+
     }
 }

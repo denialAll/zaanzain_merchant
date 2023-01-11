@@ -59,38 +59,6 @@ data class User(
     val username: String
 )
 
-@JsonClass(generateAdapter = true)
-data class CartItem(
-    val productId: Int,
-    val quantity: MutableStateFlow<Int>,
-    val title: String,
-    val merchant: String,
-    val description: String,
-    val price: Double
-)
-
-@JsonClass(generateAdapter = true)
-data class CartToSend(
-    @Json(name="product") val productId: Int,
-    val quantity: Int
-)
-
-@JsonClass(generateAdapter = true)
-data class Cart(
-    val address: Int,
-    @Json(name = "phone_number") val phoneNumber: String,
-    val note: String
-)
-
-data class Basket(
-    val cart: Cart,
-    val cartList: List<CartToSend>
-)
-
-
-data class OrderReceived(
-    @Json(name = "order_status") val orderStatus: String
-)
 
 data class Category(
     val category: String,
@@ -113,4 +81,54 @@ data class ProductData(
     @Json(name = "is_available") val isAvailable: Boolean,
     @Json(name = "category_order") val categoryOrder: Int,
     @Json(name = "product_picture") val productPicture: Uri?
+)
+
+data class ProductUpdateData(
+    val title: String,
+    val description: String = "",
+    val price: Double,
+    val category: String,
+    val servings: Int = 1,
+    @Json(name = "is_available") val isAvailable: Boolean,
+    @Json(name = "category_order") val categoryOrder: Int
+)
+
+data class CartItem(
+    val id: Int,
+    val quantity: Int,
+    val product: Int,
+    val cart: Int,
+    val title: String,
+    val price: Double
+)
+
+data class Cart(
+    val id: Int,
+    val customer: Int? = null,
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "last_name") val lastName: String,
+    val merchant: Int? = null,
+    @Json(name = "phone_number") val phoneNumber: String,
+    val created: String,
+    val note: String
+)
+
+data class IsAcceptedCartField(
+    @Json(name = "is_accepted") val isAccepted: Boolean = true
+)
+
+data class CartItems(
+    val id: Int,
+    val quantity: Int,
+    val product: Int,
+    val cart: Int,
+    val title: String,
+    val price: Double,
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "last_name") val lastName: String,
+    @Json(name = "phone_number") val phoneNumber: String,
+    @Json(name = "is_accepted") val isAccepted: Boolean?,
+    @Json(name = "is_sent") val isSent: Boolean?,
+    val created: String,
+    val note: String
 )

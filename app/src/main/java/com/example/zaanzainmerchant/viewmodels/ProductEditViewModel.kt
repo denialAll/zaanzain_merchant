@@ -1,27 +1,30 @@
 package com.example.zaanzainmerchant.viewmodels
 
 import android.app.Application
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.zaanzainmerchant.repository.AddProductRepository
 import com.example.zaanzainmerchant.repository.ProductEditRepository
+import com.example.zaanzainmerchant.utils.Constants
 import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.ProductDetails
+import com.example.zaanzainmerchant.utils.ProductUpdateData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.internal.platform.Jdk9Platform.Companion.isAvailable
 import javax.inject.Inject
 
 @HiltViewModel
 class ProductEditViewModel @Inject constructor(
+    private val productEditRepository: ProductEditRepository,
     application: Application
 ) :
     AndroidViewModel(application) {
@@ -45,7 +48,7 @@ class ProductEditViewModel @Inject constructor(
                     _description.value = it.description
                     _price.value = it.price.toString()
                     _servings.value = it.servings.toString()
-                    _imageUri.value = it.productPicture
+                    _productImage.value = it.productPicture
                 }
 
             }
@@ -109,11 +112,59 @@ class ProductEditViewModel @Inject constructor(
         _isProductProductAvailable.value = isAvailable
     }
 
-    private val _imageUri = MutableStateFlow<String?>("")
-    val imageUri: StateFlow<String?>
+    private val _productImage = MutableStateFlow<String?>("")
+    val productImage: StateFlow<String?>
+        get() = _productImage
+
+    private val _imageUri = MutableStateFlow<Uri?>(null)
+    val imageUri: StateFlow<Uri?>
         get() = _imageUri
 
-    fun updateImageUri(uri: Uri) {
-        _imageUri.value = uri.toString()
+    fun updateImageUri(uri: Uri?) {
+        _imageUri.value = uri
     }
+
+    fun updateProductData(){
+
+        val data = ProductUpdateData(
+            title = title.value ?: "",
+            description = description.value ?: "",
+            price = price.value?.toDouble() ?: 0.0,
+            category = category.value ?: "",
+            categoryOrder = categoryOrder.value?.toInt() ?: 1,
+            servings = servings.value?.toInt() ?: 1,
+            isAvailable = isProductAvailable.value ?: false
+        )
+        viewModelScope.launch {
+            try {
+                if (productToEdit.value != null){
+                    productEditRepository.updateProductData(
+                        productId = productToEdit.value!!.id,
+                        productData = data
+                    )
+                }
+            } catch (e: Exception){
+                Log.d(TAG, "${e.message}")
+            }
+        }
+    }
+
+    fun updateProductImage(
+        context: Context = getApplication<Application>().applicationContext
+    ){
+        viewModelScope.launch {
+            try {
+                Log.d(TAG, "inside viewmodel scope")
+                productEditRepository.updateProductImage(
+                    productId = productToEdit.value!!.id,
+                    productImage = imageUri.value!!,
+                    context = context
+                )
+            } catch (e: Exception) {
+                Log.d(TAG, "failed ${e.message}")
+            }
+        }
+
+    }
+
 }

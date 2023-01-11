@@ -81,7 +81,7 @@ class AddProductViewModel @Inject constructor(
 
     fun uploadProductData(
         uri: Uri? = imageUri,
-        context: Context = getApplication<Application>().applicationContext,
+        context: Context = getApplication<Application>().applicationContext
     ) {
         val data = ProductData(
             title = title,

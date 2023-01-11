@@ -19,10 +19,14 @@ interface UserAPI {
 
     @Headers("Content-Type: application/json")
     @POST("api/login/")
-    suspend fun loginUser(@Body userLoginData: UserLogin): Response<UserResponse>
+    suspend fun loginUser(
+        @Body userLoginData: UserLogin
+    ): Response<UserResponse>
 
     @Headers("Content-Type: application/json")
     @POST("api/register/")
-    suspend fun registerUser(@Body userData: UserRegistration): Response<UserResponse>
+    suspend fun registerUser(
+        @Body userData: UserRegistration
+    ): Response<UserResponse>
 
 }

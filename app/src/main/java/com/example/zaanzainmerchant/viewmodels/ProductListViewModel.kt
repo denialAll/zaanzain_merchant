@@ -40,8 +40,7 @@ class ProductListViewModel @Inject constructor(
                 _categoryList.value = it.map {
                     Category(it.category, it.categoryOrder)
                 }
-                    .toSet()
-                    .toList()
+                    .distinct()
                     .sortedBy { it.categoryOrder }
             }
         }

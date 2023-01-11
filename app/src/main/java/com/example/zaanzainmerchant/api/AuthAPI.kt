@@ -1,9 +1,7 @@
 package com.example.zaanzainmerchant.api
 
-import com.example.zaanzainmerchant.utils.Basket
-import com.example.zaanzainmerchant.utils.OrderReceived
-import com.example.zaanzainmerchant.utils.ProductDetails
-import com.example.zaanzainmerchant.utils.RestaurantDetails
+import androidx.room.Update
+import com.example.zaanzainmerchant.utils.*
 import com.squareup.moshi.Json
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -39,6 +37,52 @@ interface AuthAPI {
     @GET("products/list/merchant-products/")
     suspend fun getProductList(): List<ProductDetails>
 
+
+    @Headers("Content-Type: application/json")
+    @PATCH("products/rud/{id}/")
+    suspend fun updateProductData(
+        @Path("id") id: Int,
+        @Body productData: ProductUpdateData
+    ): ResponseBody
+
+    @Multipart
+    @PATCH("products/rud/{id}/")
+    suspend fun updateProductImage(
+        @Path("id") id: Int,
+        @Part image: MultipartBody.Part
+    ): ResponseBody
+
+//    @Headers("Content-Type: application/json")
+//    @GET("cart-item/newitemlist/")
+//    suspend fun getNewItemList(): List<CartItem>
+//
+//    @Headers("Content-Type: application/json")
+//    @GET("cart-item/accepteditemlist/")
+//    suspend fun getAcceptedItemList(): List<CartItem>
+//
+//    @Headers("Content-Type: application/json")
+//    @GET("cart/new-orders/")
+//    suspend fun getNewOrderCartList(): List<Cart>
+//
+//    @Headers("Content-Type: application/json")
+//    @GET("cart/accepted-orders/")
+//    suspend fun getAcceptedOrderCartList(): List<Cart>
+
+    @Headers("Content-Type: application/json")
+    @GET("cart-item/newandacceptedlist/")
+    suspend fun getNewAcceptedCartList(): List<CartItems>
+
+    @Headers("Content-Type: application/json")
+    @PATCH("cart/rud/{id}/")
+    suspend fun updateOrderAcceptedStatus(
+        @Path("id") id: Int,
+        @Body isAccepted: IsAcceptedCartField
+    ): ResponseBody
+
+    @Headers("Content-Type: application/json")
+    @POST("api/logout/")
+    suspend fun logout(): ResponseBody
+
     @Headers("Content-Type: application/json")
     @GET("products/detail/{id}/")
     suspend fun getProduct(@Path("id") id: Int): ProductDetails
@@ -47,8 +91,5 @@ interface AuthAPI {
     @GET("merchant/listandcreate/")
     suspend fun getRestaurantList(): List<RestaurantDetails>
 
-    @Headers("Content-Type: application/json")
-    @POST("cart/custom/")
-    suspend fun sendOrder(@Body cart: Basket): Response<OrderReceived>
 
 }
