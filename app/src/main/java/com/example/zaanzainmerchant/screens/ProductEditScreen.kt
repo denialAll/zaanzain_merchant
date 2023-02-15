@@ -10,12 +10,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -53,7 +55,12 @@ fun ProductEditScreen(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
             ),
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 12.dp),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary
+            )
         )
 
         val description by productEditViewModel.description.collectAsState()
@@ -66,6 +73,11 @@ fun ProductEditScreen(
                 capitalization = KeyboardCapitalization.Sentences,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -79,6 +91,11 @@ fun ProductEditScreen(
                 capitalization = KeyboardCapitalization.Words,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -91,6 +108,11 @@ fun ProductEditScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -103,6 +125,11 @@ fun ProductEditScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -115,6 +142,11 @@ fun ProductEditScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                focusedIndicatorColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -133,15 +165,30 @@ fun ProductEditScreen(
 
         TextButton(
             onClick = {
-                navController.navigate(Screen.UpdateProductImage.route)
+                navController.navigate(Screen.UpdateProductImage.route) {
+                    popUpTo(Screen.ProductEdit.route)
+                }
             }) {
-            Icon(painterResource(R.drawable.photo_library), "")
+            Icon(
+                painterResource(R.drawable.photo_library),
+                "",
+                tint = MaterialTheme.colorScheme.primary
+            )
             Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-            Text("Add product photo")
+            Text("Add product photo", color = MaterialTheme.colorScheme.primary)
         }
 
         Button(
-            onClick = { productEditViewModel.updateProductData() }
+            onClick = {
+                productEditViewModel.updateProductData()
+                navController.navigate(Screen.ProductList.route){
+                    popUpTo(Screen.ProductList.route) { inclusive = true }
+                }
+            },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
         ){
             Text("Update product")
         }
@@ -151,7 +198,7 @@ fun ProductEditScreen(
 
 @Composable
 fun ImageUpdateScreen(
-    productEditViewModel: ProductEditViewModel
+    productEditViewModel: ProductEditViewModel,
 ){
     Column(
         modifier = Modifier
@@ -187,7 +234,13 @@ fun ImageUpdateScreen(
                 Text("Change product picture")
             }
         } else {
-            AsyncImage(model = imageUri, contentDescription = "")
+            AsyncImage(
+                model = imageUri,
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(230.dp)
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

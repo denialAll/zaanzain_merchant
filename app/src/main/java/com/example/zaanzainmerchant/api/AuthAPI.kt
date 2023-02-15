@@ -1,10 +1,7 @@
 package com.example.zaanzainmerchant.api
 
-import androidx.room.Update
 import com.example.zaanzainmerchant.utils.*
-import com.squareup.moshi.Json
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -16,7 +13,33 @@ interface AuthAPI {
     suspend fun postMerchantData(
         @Part image: MultipartBody.Part,
         @Part("name") name: String,
-        @Part("phone_number") phoneNumber: String
+        @Part("phone_number") phoneNumber: String,
+        @Part("delivery_charges") deliveryCharges: Double,
+        @Part("delivery_free_cutoff") deliveryCutoff: Double,
+        @Part("min_order") minOrder: Double
+    ): ResponseBody
+
+    @Multipart
+    @PATCH("merchant/rud/{id}/")
+    suspend fun updateMerchantData(
+        @Path("id") id: Int,
+        @Part image: MultipartBody.Part,
+        @Part("name") name: String,
+        @Part("phone_number") phoneNumber: String,
+        @Part("delivery_charges") deliveryCharges: Double,
+        @Part("delivery_free_cutoff") deliveryCutoff: Double,
+        @Part("min_order") minOrder: Double
+    ): ResponseBody
+
+    @Multipart
+    @PATCH("merchant/rud/{id}/")
+    suspend fun updateMerchantDataNoPicture(
+        @Path("id") id: Int,
+        @Part("name") name: String,
+        @Part("phone_number") phoneNumber: String,
+        @Part("delivery_charges") deliveryCharges: Double,
+        @Part("delivery_free_cutoff") deliveryCutoff: Double,
+        @Part("min_order") minOrder: Double
     ): ResponseBody
 
     @Multipart
@@ -52,21 +75,11 @@ interface AuthAPI {
         @Part image: MultipartBody.Part
     ): ResponseBody
 
-//    @Headers("Content-Type: application/json")
-//    @GET("cart-item/newitemlist/")
-//    suspend fun getNewItemList(): List<CartItem>
-//
-//    @Headers("Content-Type: application/json")
-//    @GET("cart-item/accepteditemlist/")
-//    suspend fun getAcceptedItemList(): List<CartItem>
-//
-//    @Headers("Content-Type: application/json")
-//    @GET("cart/new-orders/")
-//    suspend fun getNewOrderCartList(): List<Cart>
-//
-//    @Headers("Content-Type: application/json")
-//    @GET("cart/accepted-orders/")
-//    suspend fun getAcceptedOrderCartList(): List<Cart>
+    @Headers("Content-Type: application/json")
+    @GET("cart-item/merchant/previous-orders/")
+    suspend fun getPreviousOrders(
+        @Query("page") pageNumber: Int
+    ): PreviousOrders
 
     @Headers("Content-Type: application/json")
     @GET("cart-item/newandacceptedlist/")
@@ -80,16 +93,37 @@ interface AuthAPI {
     ): ResponseBody
 
     @Headers("Content-Type: application/json")
+    @PATCH("cart/rud/{id}/")
+    suspend fun updateOrderSentStatus(
+        @Path("id") id: Int,
+        @Body isSent: IsSentCartField
+    ): ResponseBody
+
+    @Headers("Content-Type: application/json")
     @POST("api/logout/")
     suspend fun logout(): ResponseBody
 
     @Headers("Content-Type: application/json")
-    @GET("products/detail/{id}/")
-    suspend fun getProduct(@Path("id") id: Int): ProductDetails
+    @GET("merchant/listandcreate/")
+    suspend fun getMerchantInfo(): Response<List<MerchantInfo>>
+
+    @Multipart
+    @PATCH("merchant/rud/{id}/")
+    suspend fun updateMerchantOpenClose(
+        @Path("id") id: Int,
+        @Part("is_open") isOpen: Boolean
+    ): ResponseBody
 
     @Headers("Content-Type: application/json")
-    @GET("merchant/listandcreate/")
-    suspend fun getRestaurantList(): List<RestaurantDetails>
+    @POST("address/listandcreate/")
+    suspend fun postAddress(@Body address: PostAddress): Response<GetAddress>
 
+    @Headers("Content-Type: application/json")
+    @GET("address/listandcreate/")
+    suspend fun getAddresses(): Response<List<GetAddress>>
+
+    @Headers("Content-Type: application/json")
+    @DELETE("address/rud/{id}/")
+    suspend fun deleteAddresses(@Path("id") id: Int): Response<GetAddress>
 
 }

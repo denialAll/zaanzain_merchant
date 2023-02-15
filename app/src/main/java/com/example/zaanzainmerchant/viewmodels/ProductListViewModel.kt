@@ -40,8 +40,11 @@ class ProductListViewModel @Inject constructor(
                 _categoryList.value = it.map {
                     Category(it.category, it.categoryOrder)
                 }
-                    .distinct()
+                    .distinctBy { it.category }
                     .sortedBy { it.categoryOrder }
+            }
+            for (cat in categoryList.value ){
+                Log.d(TAG, "category: ${cat.category}, cat order: ${cat.categoryOrder}")
             }
         }
     }

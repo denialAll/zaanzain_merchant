@@ -18,10 +18,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.ProductDetails
+import com.example.zaanzainmerchant.utils.formatCurrency
 import com.example.zaanzainmerchant.viewmodels.ProductEditViewModel
 import com.example.zaanzainmerchant.viewmodels.ProductListViewModel
 
@@ -39,16 +41,8 @@ fun ProductListScreen(
     }
 
     LazyColumn(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.background),
-        verticalArrangement = Arrangement.spacedBy(18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        for (category in categoryList) {
-            Log.d(TAG, "Category list is ${category}")
-        }
-
+    ){
         items(categoryList) { category ->
             Text(
                 text = category.category,
@@ -76,12 +70,13 @@ fun ProductDetailCard(
 ) {
     Card(
         modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
+            .padding(horizontal = 8.dp, vertical = 6.dp)
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         elevation = 4.dp
     ) {
         Row(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
+            modifier = Modifier.fillMaxSize()
         ){
             Column(
                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -91,7 +86,7 @@ fun ProductDetailCard(
                 Text(
                     text = product.title,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.paddingFromBaseline(
                         top = 24.dp, bottom = 8.dp
                     )
@@ -99,19 +94,19 @@ fun ProductDetailCard(
                 Text(
                     text = product.description,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Light
+
                 )
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ){
-                    Text(
-                        text = "Rs: ${product.price}",
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                Text(
+                    text = "Rs: ${formatCurrency(product.price)}",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .paddingFromBaseline(top = 16.dp, bottom = 12.dp),
+                    fontWeight = FontWeight.SemiBold
+                )
             }
             
             Spacer(modifier = Modifier.weight(1f).fillMaxHeight())
@@ -119,7 +114,9 @@ fun ProductDetailCard(
             TextButton(
                 onClick = {
                     productEditViewModel.updateProductIdToEdit(product)
-                    navController.navigate(Screen.ProductEdit.route)
+                    navController.navigate(Screen.ProductEdit.route) {
+                        popUpTo(Screen.ProductList.route)
+                    }
                 }
             ) {
                 Icon(imageVector = Icons.Filled.Edit, contentDescription = "Edit product")

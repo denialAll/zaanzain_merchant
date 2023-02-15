@@ -1,6 +1,7 @@
 package com.example.zaanzainmerchant.repository
 
 import android.util.Log
+import com.example.zaanzainmerchant.api.AuthAPI
 import com.example.zaanzainmerchant.api.UserAPI
 import com.example.zaanzainmerchant.network.NetworkResult
 import com.example.zaanzainmerchant.utils.Constants.TAG
@@ -10,12 +11,13 @@ import com.example.zaanzainmerchant.utils.UserRegistration
 import com.example.zaanzainmerchant.utils.UserResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Response
 import javax.inject.Inject
 
 
-class UserRepository @Inject constructor(private val userAPI: UserAPI){
+class UserRepository @Inject constructor(private val userAPI: UserAPI, private val authAPI: AuthAPI){
 
     @Inject
     lateinit var tokenManager: TokenManager
@@ -36,6 +38,13 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI){
         handleResponse(response)
     }
 
+    suspend fun logoutUser(): ResponseBody{
+        _userResponse.value = null
+        tokenManager.deleteToken()
+        val response = authAPI.logout()
+        return response
+    }
+
     private fun handleResponse(response: Response<UserResponse>){
         if (response.isSuccessful && response.body() != null) {
             tokenManager.saveToken(response.body()!!.token)
@@ -54,6 +63,4 @@ class UserRepository @Inject constructor(private val userAPI: UserAPI){
 
         }
     }
-
-
 }

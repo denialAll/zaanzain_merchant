@@ -4,11 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.zaanzainmerchant.repository.NewOrdersRepository
-import com.example.zaanzainmerchant.utils.Cart
-import com.example.zaanzainmerchant.utils.CartItem
-import com.example.zaanzainmerchant.utils.CartItems
+import com.example.zaanzainmerchant.utils.*
 import com.example.zaanzainmerchant.utils.Constants.TAG
-import com.example.zaanzainmerchant.utils.IsAcceptedCartField
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +41,7 @@ class NewOrdersViewModel @Inject constructor(private val newOrdersRepository: Ne
             refreshCartItems()
             newOrdersRepository.cartItems.collect {
                 _newOrdersCartItems.value = it.filter { it.isAccepted == null }
-                _acceptedOrdersCartItems.value = it.filter { it.isAccepted == true }
+                _acceptedOrdersCartItems.value = it.filter { it.isAccepted == true && it.isSent == false }
 
                 _newOrdersCartList.value = it
                     .filter { it.isAccepted == null }
@@ -55,12 +52,16 @@ class NewOrdersViewModel @Inject constructor(private val newOrdersRepository: Ne
                             lastName = it.lastName,
                             phoneNumber = it.phoneNumber,
                             created = it.created,
-                            note = it.note
+                            note = it.note,
+                            address = it.address,
+                            addressName = it.addressName,
+                            latitude = it.latitude,
+                            longitude = it.longitude
                         )
                     }.distinct()
 
                 _acceptedOrdersCartList.value = it
-                    .filter { it.isAccepted == true }
+                    .filter { it.isAccepted == true && it.isSent == false }
                     .map {
                         Cart(
                             id = it.cart,
@@ -68,7 +69,11 @@ class NewOrdersViewModel @Inject constructor(private val newOrdersRepository: Ne
                             lastName = it.lastName,
                             phoneNumber = it.phoneNumber,
                             created = it.created,
-                            note = it.note
+                            note = it.note,
+                            address = it.address,
+                            addressName = it.addressName,
+                            latitude = it.latitude,
+                            longitude = it.longitude
                         )
                     }.distinct()
             }
@@ -99,54 +104,17 @@ class NewOrdersViewModel @Inject constructor(private val newOrdersRepository: Ne
         }
     }
 
-//    val newOrdersCartItems: StateFlow<List<CartItem>>
-//        get() = newOrdersRepository.newOrders
-//
-//    val acceptedOrdersCartItems: StateFlow<List<CartItem>>
-//        get() = newOrdersRepository.acceptedOrders
-//
-//    val newOrdersCartList: StateFlow<List<Cart>>
-//        get() = newOrdersRepository.newOrdersCarts
-//
-//    val acceptedOrdersCartList: StateFlow<List<Cart>>
-//        get() = newOrdersRepository.acceptedOrdersCarts
-//
-//    init {
-//        viewModelScope.launch {
-//            refreshCart()
-//        }
-//    }
-
-//
-
-//
-//    fun refreshCart(){
-//        viewModelScope.launch {
-//            try {
-//                newOrdersRepository.getNewOrders()
-//            } catch (e: Exception){
-//                Log.d(TAG, "get new orders: ${e.message}")
-//            }
-//
-//            try {
-//                newOrdersRepository.getNewOrdersCarts()
-//
-//            } catch (e: Exception){
-//                Log.d(TAG, "get new orders carts: ${e.message}")
-//            }
-//
-//            try {
-//                newOrdersRepository.getAcceptedOrders()
-//
-//            } catch (e: Exception){
-//                Log.d(TAG, "get accepted orders ${e.message}")
-//            }
-//
-//            try {
-//                newOrdersRepository.getAcceptedOrdersCarts()
-//            } catch (e: Exception){
-//                Log.d(TAG, "get accepted orders carts ${e.message}")
-//            }
-//        }
-//    }
+    fun updateIsCartSent(
+        cartId: Int,
+        isSent: IsSentCartField
+    ){
+        viewModelScope.launch {
+            try {
+                newOrdersRepository.updateIsOrderSent(cartId, isSent)
+            } catch (e: Exception){
+                Log.d(TAG, "${e.message}")
+            }
+            refreshCartItems()
+        }
+    }
 }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ZaanZain Merchant</string>
+    <string name="app_name">ZaanZain Partner</string>
     <string name="login_screen">Login</string>
     <string name="registration_screen">Registration</string>
     <string name="home_screen">Home</string>
@@ -12,4 +12,9 @@
     <string name="edit_product">Edit Product</string>
     <string name="update_product_image">Update Product Image</string>
     <string name="logout">Logout</string>
+    <string name="add_product_image">Add Product Image</string>
+    <string name="previous_orders">Previous Orders</string>
+    <string name="open_close_restaurant">Open/Close</string>
+    <string name="my_address">My Address</string>
+    <string name="new_address">New Address</string>
 </resources>

@@ -1,24 +1,19 @@
 package com.example.zaanzainmerchant.screens
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.zaanzainmerchant.viewmodels.LogoutViewModel
 
 @Composable
 fun LogoutScreen(
-    logoutViewModel: LogoutViewModel
+    logoutViewModel: LogoutViewModel,
+    navController: NavController
 ){
     val openDialog = remember { mutableStateOf(true) }
 
@@ -40,18 +35,25 @@ fun LogoutScreen(
                     onClick = {
                         openDialog.value = false
                         logoutViewModel.logout()
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.Login.route)
+                        }
+
                     }
                 ) {
-                    Text("Confirm")
+                    Text("Confirm", color = MaterialTheme.colorScheme.primary)
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = {
                         openDialog.value = false
+                        navController.navigate(Screen.Home.route){
+                            popUpTo(Screen.Home.route)
+                        }
                     }
                 ) {
-                    Text("Cancel")
+                    Text("Cancel", color = MaterialTheme.colorScheme.primary)
                 }
             }
         )

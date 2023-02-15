@@ -5,19 +5,24 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -81,23 +86,51 @@ fun RegistrationScreen(
             )
         )
 
+        val passwordVisible = rememberSaveable{ mutableStateOf(false) }
         TextField(
             value = registrationViewModel.password,
             onValueChange = { registrationViewModel.updateUserPassword(it) },
             label = { Text("Password") },
+            visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Next
-            )
+            ),
+            trailingIcon = {
+                val image = if (passwordVisible.value)
+                    Icons.Filled.Visibility
+                else Icons.Filled.VisibilityOff
+
+                // Please provide localized description for accessibility services
+                val description = if (passwordVisible.value) "Hide password" else "Show password"
+
+                IconButton(onClick = {passwordVisible.value = !passwordVisible.value}){
+                    Icon(imageVector  = image, description)
+                }
+            }
         )
+        val confirmPasswordVisible = rememberSaveable{ mutableStateOf(false) }
         TextField(
             value = registrationViewModel.confirmPassword,
             onValueChange = { registrationViewModel.updateUserConfirmPassword(it) },
             label = { Text("Confirm Password ") },
+            visualTransformation = if (confirmPasswordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
-            )
+            ),
+            trailingIcon = {
+                val image = if (confirmPasswordVisible.value)
+                    Icons.Filled.Visibility
+                else Icons.Filled.VisibilityOff
+
+                // Please provide localized description for accessibility services
+                val description = if (confirmPasswordVisible.value) "Hide password" else "Show password"
+
+                IconButton(onClick = {confirmPasswordVisible.value = !confirmPasswordVisible.value}){
+                    Icon(imageVector  = image, description)
+                }
+            }
         )
         Button(onClick = { registrationViewModel.postUserRegistrationData() }) {
             Text("Register")
@@ -144,7 +177,9 @@ fun FinalRegistrationScreen(
                 screenState = LoginScreenState.Success,
             )
             LaunchedEffect(Unit) {
-                navController.navigate(Screen.Login.route)
+                navController.navigate(Screen.Login.route){
+                    popUpTo(Screen.Login.route) { inclusive = true }
+                }
                 Log.d(Constants.TAG, "Successfully navigated to login screen")
             }
         }
