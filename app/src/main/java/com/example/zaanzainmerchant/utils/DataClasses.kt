@@ -114,7 +114,10 @@ data class MerchantInfo(
     @Json(name = "display_picture") val displayPicture: String,
     @Json(name = "delivery_charges") val deliveryCharges: Double?,
     @Json(name = "delivery_free_cutoff") val deliveryCutoff: Double?,
-    @Json(name = "min_order") val minOrder: Double?
+    @Json(name = "min_order") val minOrder: Double?,
+    val username: String? = null,
+    @Json(name = "first_name") val firstName: String,
+    @Json(name = "last_name") val lastName: String
 )
 
 data class ProductData(

@@ -11,16 +11,16 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -85,7 +85,8 @@ fun MerchantApp(
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                restaurantDetailViewModel = restaurantDetailViewModel
             )
         },
         bottomBar = {
@@ -229,21 +230,26 @@ fun BottomBar(
                     val badgeNumber: Int = cartList.size
                     if (badgeNumber > 0){
                         BadgedBox(badge = {
-                            Badge {
+                            Badge(
+                                backgroundColor = MaterialTheme.colorScheme.onPrimary
+                            ) {
                                 Text(
                                     text = badgeNumber.toString(),
+                                    color = MaterialTheme.colorScheme.primary
                                 )
                             }
                         }) {
                             Icon(
                                 screen.icon!!,
-                                contentDescription = null
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
                             )
                         }
                     } else {
                         Icon(
                             screen.icon!!,
-                            null
+                            null,
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
 
@@ -291,8 +297,15 @@ fun TopBar(
 fun Drawer(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
-    navController: NavController
+    navController: NavController,
+    restaurantDetailViewModel: RestaurantDetailViewModel
 ){
+    LaunchedEffect(Unit){
+        restaurantDetailViewModel.getMerchantInfo()
+    }
+
+    val userDetails by restaurantDetailViewModel.merchantInfo.collectAsState()
+
     val items = listOf(
         Screen.Settings,
         Screen.Profile,
@@ -304,6 +317,42 @@ fun Drawer(
         Screen.Logout
     )
     Column {
+
+        if (userDetails != null){
+            androidx.compose.material3.Text(
+                text = "${userDetails!!.firstName} ${userDetails!!.lastName}",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(start = 12.dp, top = 24.dp, bottom = 12.dp)
+            )
+            androidx.compose.material3.Text(
+                text = "${userDetails!!.name}",
+                fontSize = 13.sp,
+                fontFamily = FontFamily.Cursive,
+                fontWeight = FontWeight.Light,
+                modifier = Modifier
+                    .padding(start = 12.dp, bottom = 24.dp)
+            )
+        } else {
+            androidx.compose.material3.Text(
+                text = "Not logged in!",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(start = 12.dp, top = 24.dp, bottom = 12.dp)
+            )
+        }
+
+        androidx.compose.material3.Divider(color = Color.Black)
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+
+
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 

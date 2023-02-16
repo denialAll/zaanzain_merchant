@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -30,6 +31,7 @@ import com.example.zaanzainmerchant.utils.Constants.TAG
 import com.example.zaanzainmerchant.utils.UserResponse
 import com.example.zaanzainmerchant.viewmodels.LoginViewModel
 import com.example.zaanzainmerchant.viewmodels.NewOrdersViewModel
+import kotlin.math.log
 
 
 @Composable
@@ -64,6 +66,10 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
+            ),colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             ),
             isError = isWrongCred
         )
@@ -76,6 +82,11 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             ),
             isError = isWrongCred,
             trailingIcon = {
@@ -98,6 +109,8 @@ fun LoginScreen(
             modifier = modifier
                 .padding(horizontal = 4.dp, vertical = 4.dp),
             onClick = {loginViewModel.postLoginData()},
+            enabled = loginViewModel.password != ""
+                    && android.util.Patterns.EMAIL_ADDRESS.matcher(loginViewModel.username).matches()
         ){
             Text(text = "Login")
         }
@@ -108,7 +121,7 @@ fun LoginScreen(
                 modifier.clickable {
                     navigateToRegistration()
                 },
-                color = MaterialTheme.colorScheme.scrim
+                color = MaterialTheme.colorScheme.primary
             )
         }
 

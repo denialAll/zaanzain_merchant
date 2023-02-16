@@ -5,10 +5,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -61,6 +58,11 @@ fun RegistrationScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -72,6 +74,11 @@ fun RegistrationScreen(
                 capitalization = KeyboardCapitalization.Words,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -83,6 +90,11 @@ fun RegistrationScreen(
                 capitalization = KeyboardCapitalization.Words,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next
+            ),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
             )
         )
 
@@ -107,7 +119,12 @@ fun RegistrationScreen(
                 IconButton(onClick = {passwordVisible.value = !passwordVisible.value}){
                     Icon(imageVector  = image, description)
                 }
-            }
+            },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
+            )
         )
         val confirmPasswordVisible = rememberSaveable{ mutableStateOf(false) }
         TextField(
@@ -130,9 +147,25 @@ fun RegistrationScreen(
                 IconButton(onClick = {confirmPasswordVisible.value = !confirmPasswordVisible.value}){
                     Icon(imageVector  = image, description)
                 }
-            }
+            },
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedLabelColor = MaterialTheme.colorScheme.primary
+            )
         )
-        Button(onClick = { registrationViewModel.postUserRegistrationData() }) {
+        Button(
+            onClick = { registrationViewModel.postUserRegistrationData() },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ),
+            enabled =
+            registrationViewModel.password == registrationViewModel.confirmPassword
+                    && android.util.Patterns.EMAIL_ADDRESS.matcher(registrationViewModel.username).matches()
+                    && registrationViewModel.firstName != ""
+                    && registrationViewModel.lastName != ""
+        ) {
             Text("Register")
         }
 

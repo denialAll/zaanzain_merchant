@@ -114,4 +114,16 @@ class RestaurantDetailViewModel @Inject constructor(
             }
         }
     }
+
+    fun getMerchantInfo(){
+        if (merchantInfo.value == null){
+            viewModelScope.launch {
+                try {
+                    restaurantDetailRepository.getMerchantData()
+                } catch (e: Exception){
+                    Log.d(TAG, "error occured retriving merchant data")
+                }
+            }
+        }
+    }
 }

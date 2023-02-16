@@ -91,11 +91,6 @@ class RestaurantDetailRepository @Inject constructor(private val authAPI: AuthAP
                 }
             }
         }
-
-
-
-
-
     }
 
     suspend fun getMerchantData(){
